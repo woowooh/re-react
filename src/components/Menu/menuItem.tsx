@@ -18,11 +18,11 @@ function MenuItem(props: MenuItemProps) {
         'is-active': context.index === index
     })
     const handleClick = () => {
-        if (context.onSelect && !disabled && index) {
+        if (context.onSelect && !disabled && index !== undefined) {
             context.onSelect(index)
         }
     }
-    return (
+    return ( 
         <li className={classes} style={style} onClick={handleClick}>
             { children }
         </li>
