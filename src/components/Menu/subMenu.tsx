@@ -1,11 +1,11 @@
-import React, { useContext, FunctionComponentElement } from 'react'
+import React, { useState, useContext } from 'react'
 import classNames from 'classnames'
 import { MenuContext } from './menu'
 import { MenuItemProps } from './menuItem'
 
 
 export interface ISubMenuProps {
-    index?: number
+    index?: string
     title: string
     className?: string
     children?: React.ReactNode
@@ -14,16 +14,46 @@ export interface ISubMenuProps {
 function SubMenu(props: ISubMenuProps) {
     const {index, title, children, className} = props
     const context = useContext(MenuContext)
+    const openedSubMenus = context.defaultOpenSubMenus as Array<String>
+    const isOpened = (index && context.mode === 'vertical') ? openedSubMenus.includes(index) : false
+    const [ menuOpen, setMenuOpen] = useState(isOpened)
     const classes = classNames('menu-item submenu-item', className, {
         'is-active': context.index === index
     })
+    const handleClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        setMenuOpen(!menuOpen)
+    }
+    let timer:any
+    const handleMouse = (e: React.MouseEvent, toggle: boolean) => {
+        clearTimeout(timer)
+        e.preventDefault()
+        timer = setTimeout(() => {
+            setMenuOpen(toggle)
+        }, 300)
+    }
+    const clickEvents = context.mode === 'vertical' ? {
+        onClick: handleClick
+    }: {}
+    const hoverEvents = context.mode !== 'vertical' ? {
+        onMouseEnter: (e: React.MouseEvent) => {
+            handleMouse(e, true)
+        },
+        onMouseLeave: (e: React.MouseEvent) => {
+            handleMouse(e, false)
+        }
+    }: {}
+
     const renderChildren = () => {
-        const childrenComponent = React.Children.map(children, (child, index) => {
+        const subMenuClasses = classNames('viking-submenu', {
+            'menu-opened': menuOpen
+        })
+        const childrenComponent = React.Children.map(children, (child, i) => {
             const childElement = child as React.FunctionComponentElement<MenuItemProps>
             const { displayName } = childElement.type
             if (displayName === 'MenuItem') {
                 return React.cloneElement(childElement, {
-                    index
+                    index: `${index}-${i}`
                 })
             } else {
                 console.log(childElement)
@@ -31,14 +61,14 @@ function SubMenu(props: ISubMenuProps) {
             }
         })
         return (
-            <ul className='viking-submenu'>
+            <ul className={subMenuClasses} >
                 {childrenComponent}
             </ul>
         )
     }
     return (
-        <li key={index} className={classes}>
-            <div className="submenu-title">
+        <li key={index} className={classes} {...hoverEvents}>
+            <div className="submenu-title" {...clickEvents}>
                 {title}
             </div>
             { renderChildren() }

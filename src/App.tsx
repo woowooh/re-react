@@ -11,21 +11,38 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Menu mode={"vertical"} defaultIndex={0}  onSelect={(index) => { alert(index)}}>
+        <Menu defaultOpenSubMenus={['3']} mode={"vertical"} defaultIndex={'0'}  onSelect={(index) => { alert(index)}}>
+          <MenuItem>
+            menuItem1
+          </MenuItem>
+          <MenuItem >
+            menuItem2
+          </MenuItem>
+          <MenuItem >
+            menuItem3
+          </MenuItem>
           <SubMenu title="dropdown">
-            <MenuItem>
+            <MenuItem >
               dropdown1
             </MenuItem>
             <MenuItem >
               dropdown2
             </MenuItem>
+            <MenuItem >
+              dropdown3
+            </MenuItem>
           </SubMenu>
-          <MenuItem >
-            link3
-          </MenuItem>
-          <MenuItem >
-            link4
-          </MenuItem>
+          <SubMenu title="dropdown">
+            <MenuItem >
+              dropdown1
+            </MenuItem>
+            <MenuItem >
+              dropdown2
+            </MenuItem>
+            <MenuItem >
+              dropdown3
+            </MenuItem>
+          </SubMenu>
         </Menu>
         <Button disabled>Hello</Button>  
         <p>
